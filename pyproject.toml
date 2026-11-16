@@ -1,0 +1,48 @@
+[project]
+name = "jobpolit"
+version = "0.1.0"
+description = "Local AI internship assistant with job search, JD parsing and resume matching"
+readme = "README.md"
+authors = [
+    { name = "msa079" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "langchain>=1.4.3",
+    "langchain-openai>=1.6.6",
+    "langchain-tavily>=0.2.18",
+    "langgraph>=1.2.12",
+    "langgraph-checkpoint-sqlite>=3.1.1",
+    "python-dotenv>=1.2.3",
+]
+
+[project.scripts]
+# 本项目的包目录是扁平的 src/（没有 src/jobpolit/），
+# 所以网页入口模块路径写 src.web，而不是 project.name 推导出来的 jobpolit。
+jobpolit = "src.web:main"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[tool.uv.build-backend]
+# uv_build 默认按项目名去 src/jobpolit/ 里找包，而本项目的包目录就叫 src/。
+# module-root = "" 让它在仓库根目录找，module-name = "src" 指定包名，
+# 合起来指向 src/__init__.py。缺任一行，uv sync / uv build 都会报 Expected a Python module。
+module-name = "src"
+module-root = ""
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+# 让 pytest 在项目根目录下能找到 src 包（否则 import src.xxx 会失败）。
+pythonpath = ["."]
+testpaths = ["tests"]
+
